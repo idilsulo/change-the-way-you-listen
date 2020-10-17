@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <script src='{{ url_for('static', filename='index.js') }}'></script>
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <h1>Change the way you listen</h1>
+    <p>Welcome to change the way you listen. We will show you how your music taste changes through time.</p>
+    <p>Discover the chart below to see how the genres are distributed based on the artists that are available on Spotify. Click on the button below to see your own personal analysis.</p>
+    <a id="login" href="/my-analysis" class="btn btn-sm btn-primary">Login with Spotify</a>
+    <br>
+    <br>
+    <h2>Genres Across the World</h2>
+    <p>Spotify works at a massive scale, bringing people from all kinds of disciplines and all parts of the business together to deliver an amazing experience.  People all around the world login to Spotify everyday to hear the sounds that they would enjoy which comes from very different parts of the music world. Have you ever wondered how the music taste across the world looks like when you take a step back to see the similarities and differences of different genres?</p>
+    <p>Spotify uses 126 main genre categories which are shown on the list given below in alphabetical order. </p>
+    <p>Each genre is associated with sub-genres which explain the sound that you are listening much more in detail.</p>
+    <div class='tableauPlaceholder' id='viz1602800465481' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Mu&#47;MusicGenres_16027827073270&#47;Dashboard1&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='MusicGenres_16027827073270&#47;Dashboard1' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Mu&#47;MusicGenres_16027827073270&#47;Dashboard1&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en' /><param name='filter' value='publish=yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1602800465481');                    var vizElement = divElement.getElementsByTagName('object')[0];                    if ( divElement.offsetWidth > 800 ) { vizElement.style.minWidth='627px';vizElement.style.maxWidth='650px';vizElement.style.width='100%';vizElement.style.height='887px';} else if ( divElement.offsetWidth > 500 ) { vizElement.style.minWidth='627px';vizElement.style.maxWidth='650px';vizElement.style.width='100%';vizElement.style.height='887px';} else { vizElement.style.width='100%';vizElement.style.height='727px';}                     var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+{% endblock main %}
