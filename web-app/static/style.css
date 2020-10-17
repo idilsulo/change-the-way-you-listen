@@ -26,9 +26,26 @@
   position: relative;
 }*/
 
+#content #loading {
+    width: 35px;
+    height: 35px;
+    display: none;
+    background: url(/static/loadingimage.gif) no-repeat;
+    cursor: wait;
+    }
+
+ svg #loading {
+    width: 35px;
+    height: 35px;
+    display: none;
+    background: url(/static/loadingimage.gif) no-repeat;
+    cursor: wait;
+    }
+
+
 svg {
   position: relative;
-  top: -130vh;
+  top: -30vh;
   margin-bottom: 40vh;
   display: block;
   margin-left: auto;
@@ -49,10 +66,10 @@ h2 {
   top: 0vh;
 }*/
 
-.under-bar {
+/*.under-bar {
   position: relative;
   top: 60vh;
-}
+}*/
 .playlist {
   position: relative;
 /*  top: 60vh;*/

@@ -1,0 +1,26 @@
+    {% extends "base.html" %}
+
+    {% block main %}
+    <h1>Hello, {{ user }}!</h1>
+    <h1>Here is your personal listening analysis.</h1>
+    <p>Why wait for the end of the year for Spotify to send you a playlist if you can learn which artists you had listened the most already?</p>
+    <p>Here you can find a visual representation of your most listened artists and genres in various time ranges.</p>
+    <br>
+
+
+    <div class="playlists">
+    <h3>Here is a playlist for you!</h3>
+    {% for item in track_names %}
+    <p>{{item.decode('utf-8')}}</p>
+    {% endfor %}
+
+     <form>
+	  <input type="radio" id="male" name="gender" value="male">
+	  <label for="male">Male</label><br>
+	  <input type="radio" id="female" name="gender" value="female">
+	  <label for="female">Female</label><br>
+	  <input type="radio" id="other" name="gender" value="other">
+	  <label for="other">Other</label>
+	</form> 
+    </div>
+    {% endblock main %}

@@ -178,7 +178,6 @@
             }
         }
     </script>
-    </div>
 
     <div  class="top">
     <h2>
@@ -196,10 +195,8 @@
     <br>
     <br>
     <div class="playlist">
-    <h3>Here is a playlist for you!</h3>
-    {% for item in track_names %}
-    <p>{{item.decode('utf-8')}}</p>
-    {% endfor %}
+    <a id="login" href="/my-playlist" class="btn btn-sm btn-primary">Get Personal Playlist</a>
+    </div>
     </div>
     </div>
     
