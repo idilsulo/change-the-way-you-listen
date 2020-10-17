@@ -1,25 +1,25 @@
-	{% extends "base.html" %}
+    {% extends "base.html" %}
 
-	{% block main %}
-	<h1>Hello, {{ user }}!</h1>
-	<h1>Here is your personal listening analysis.</h1>
-	<p>Why wait for the end of the year for Spotify to send you a playlist if you can learn which artists you had listened the most already?</p>
-	<p>Here you can find a visual representation of your most listened artists and genres in various time ranges.</p>
-	<br>
-	<script src="https://d3js.org/d3.v4.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    {% block main %}
+    <h1>Hello, {{ user }}!</h1>
+    <h1>Here is your personal listening analysis.</h1>
+    <p>Why wait for the end of the year for Spotify to send you a playlist if you can learn which artists you had listened the most already?</p>
+    <p>Here you can find a visual representation of your most listened artists and genres in various time ranges.</p>
+    <br>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
-	<div>
-	 <h2>Your Top Artists and Genres of This Year</h2>
+    <div>
+     <h2>Your Top Artists and Genres of This Year</h2>
     <p>
-    	Your top artists and genres are derived from the data of your listening history which is collected approximately in the last 6 months.</p>
-	 <p> 
-	 	You can click on any place on the diagram to zoom in, and click on the middle to zoom out.
-	 </p>
-	 <p>
-		You may see the same artist being listed more than once as each artist may belong to more than one genre.
-	</p>
-	<style>
+        Your top artists and genres are derived from the data of your listening history which is collected approximately in the last 6 months.</p>
+     <p> 
+        You can click on any place on the diagram to zoom in, and click on the middle to zoom out.
+     </p>
+     <p>
+        You may see the same artist being listed more than once as each artist may belong to more than one genre.
+    </p>
+    <style>
         .slice {
             cursor: pointer;
         }
@@ -41,7 +41,7 @@
     </style>
 
     
-	<script>
+    <script>
         const width = window.innerWidth,
             height = window.innerHeight,
             maxRadius = (Math.min(width, height) / 2) - 5;
@@ -96,7 +96,7 @@
             .on('click', () => focusOn()); // Reset zoom on canvas click
 
         var jsonString = {{top_genres|tojson|safe}};
-		var root = JSON.parse(jsonString);
+        var root = JSON.parse(jsonString);
         // console.log(root);
 
         root = d3.hierarchy(root);
@@ -182,112 +182,27 @@
 
     <div  class="top">
     <h2>
-    	Your Heavy Rotation
+        Your Heavy Rotation
     </h2>
-	<p>
-		What were you upto in the last 4 weeks?
-	</p>
-	<p>
-		This colorful diagram illustrates your heavy rotation of genres based on your top artists in the last month.
-	</p>
-    <style>
-
-    .axis {
-      font: 10px sans-serif;
-    }
-
-    .axis path,
-    .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-
-    </style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
-
-<div class="bar">
-<script>
-
-    var margin = {top: 20, right: 20, bottom: 70, left: 40}
-        width2 = 1000 - margin.left - margin.right,
-        height2 = 400 - margin.top - margin.bottom;
-
-    // Parse the date / time
-    var parseDate = d3.time.format("%Y-%m").parse;
-
-    var x2 = d3.scale.ordinal().rangeRoundBands([0, width2], .05);
-
-    var y2 = d3.scale.linear().range([height2, 0]);
-
-    var xAxis = d3.svg.axis()
-        .scale(x2)
-        .orient("bottom")
-        .tickFormat(d3.time.format("%Y-%m"));
-
-    var yAxis = d3.svg.axis()
-        .scale(y2)
-        .orient("left")
-        .ticks(10);
-
-    var svg2 = d3.select("body").append("svg")
-        .attr("width", width2 + margin.left + margin.right)
-        .attr("height", height2 + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")");
-
-    d3.csv('{{ url_for('static', filename='bar-data.csv') }}', function(error, data) {
-
-        data.forEach(function(d) {
-            d.date = parseDate(d.date);
-            d.value = +d.value;
-        });
-        
-      x2.domain(data.map(function(d) { return d.date; }));
-      y2.domain([0, d3.max(data, function(d) { return d.value; })]);
-
-      svg2.append("g")
-          .attr("class", "x axis")
-          .attr("transform", "translate(0," + height2 + ")")
-          .call(xAxis)
-        .selectAll("text")
-          .style("text-anchor", "end")
-          .attr("dx", "-.8em")
-          .attr("dy", "-.55em")
-          .attr("transform", "rotate(-90)" );
-
-      svg2.append("g")
-          .attr("class", "y axis")
-          .call(yAxis)
-        .append("text")
-          .attr("transform", "rotate(0)")
-          .attr("y", 6)
-          .attr("dy", ".71em")
-          .style("text-anchor", "begin")
-          .text("Listening percentage (%)");
-
-      svg2.selectAll("bar")
-          .data(data)
-        .enter().append("rect")
-          .style("fill", d => color(d.date))
-          .attr("x", function(d) { return x2(d.date); })
-          .attr("width", x2.rangeBand())
-          .attr("y", function(d) { return y2(d.value); })
-          .attr("height", function(d) { return height2 - y2(d.value); });
-
-    });
-
-</script>
-</div>
-<div class="under-bar">
-        <p>
-        Hmm.. Let's see what we can recommend to you based on that.
-        </p>
+    <p>
+        What were you upto in the last 4 weeks?
+    </p>
+    <p>
+        This colorful diagram illustrates your heavy rotation of artists and genres based on your recently played tracks.
+    </p>
+    <p>
+        Hmm.. Let's see what we can recommend you based on that.
+    </p>
+    <br>
+    <br>
+    <div class="playlist">
+    <h3>Here is a playlist for you!</h3>
+    {% for item in track_names %}
+    <p>{{item.decode('utf-8')}}</p>
+    {% endfor %}
     </div>
     </div>
     
 
-	{% endblock main %}
+    {% endblock main %}
 

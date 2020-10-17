@@ -185,3 +185,7 @@ dmypy.json
 *.csv
 *.json
 *.pkl
+
+# Cache files
+.flask_session
+.spotify_caches

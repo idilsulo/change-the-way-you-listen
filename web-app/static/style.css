@@ -28,7 +28,7 @@
 
 svg {
   position: relative;
-  top: -15vh;
+  top: -130vh;
   margin-bottom: 40vh;
   display: block;
   margin-left: auto;
@@ -41,7 +41,7 @@ h2 {
 
 .top{
   position: relative;
-  top: 120vh;
+  top: 100vh;
 }
 
 /*.bar{
@@ -52,6 +52,10 @@ h2 {
 .under-bar {
   position: relative;
   top: 60vh;
+}
+.playlist {
+  position: relative;
+/*  top: 60vh;*/
 }
 .nav-item{
   margin-left: 5vh;

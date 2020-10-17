@@ -70,9 +70,14 @@ def my_analysis():
     #        * Past 3 years
 
     # Get the top genres of user based on top artists
-    user_name, top_genres_data = user_top_genres(auth_manager, term='medium_term')
+    sp, user_name, top_genres_data = user_top_genres(auth_manager, term='medium_term')
     top_genres_data = top_genres_data.decode()
-    return render_template('analysis.html', user=user_name, top_genres=top_genres_data)
+
+    playlist = return_playlist(sp, danceability='low', instrumentalness='high')
+    track_names, track_uris = get_playlist_tracks(sp, playlist)
+
+    return render_template('analysis.html', user=user_name, top_genres=top_genres_data, 
+                                            track_uris=track_uris, track_names=track_names)
 
 
 if __name__ == '__main__':
