@@ -38,16 +38,6 @@ t = None
 def session_cache_path():
     return caches_folder + session.get('uuid')
 
-def set_all_tracks(sp):
-    global all_tracks
-    # playlist = return_playlist(sp, danceability='low', instrumentalness='high')
-    # track_names, track_uris = get_playlist_tracks(sp, playlist)
-    # return render_template('playlist.html', track_uris=track_uris, track_names=track_names)
-
-    all_tracks = return_all_tracks(sp)
-    print("All tracks of the user is set.")
-    
-
 @app.route('/')
 @app.route('/index')
 def index():
@@ -64,8 +54,8 @@ def callback():
 # @app.route('/my-analysis', methods=['POST', 'GET'])
 @app.route('/my-analysis')
 def my_analysis():
-    global sp
-    global t
+    # global sp
+    # global t
     if not session.get('uuid'):
         # Step 1. Visitor is unknown, give random ID
         session['uuid'] = str(uuid.uuid4())
@@ -91,30 +81,81 @@ def my_analysis():
     #        * Past 3 years
 
     # Get the top genres of user based on top artists
-    spotify, user_name, top_genres_data = user_top_genres(auth_manager, term='medium_term')
-    sp = spotify
+    sp, user_name, top_genres_data = user_top_genres(auth_manager, term='medium_term')
     top_genres_data = top_genres_data.decode()
-    t = threading.Thread(target=set_all_tracks, args=(sp,))
-    t.start()
     return render_template('analysis.html', user=user_name, top_genres=top_genres_data)
 
 
 # @app.route('/my-playlist', methods=['POST', 'GET'])
 @app.route('/my-playlist')
 def my_playlist():
-    global sp
-    global t
     # playlist = return_playlist(sp, danceability='low', instrumentalness='high')
     # track_names, track_uris = get_playlist_tracks(sp, playlist)
     # return render_template('playlist.html', track_uris=track_uris, track_names=track_names)
-    if len(all_tracks) == 0:
-        print("Waiting for thread to join.")
-        t.join()
+    if not session.get('uuid'):
+        # Step 1. Visitor is unknown, give random ID
+        session['uuid'] = str(uuid.uuid4())
 
-    playlist = return_playlist(sp=sp, df=all_tracks, danceability='low', instrumentalness='high')
+    scope = 'user-read-recently-played user-top-read user-modify-playback-state'
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope,
+                                                cache_path=session_cache_path(),
+                                                show_dialog=True)
+
+    if request.args.get("code"):
+        # Step 3. Being redirected from Spotify auth page
+        auth_manager.get_access_token(request.args.get("code"))
+        return redirect('/')
+
+    if not auth_manager.get_cached_token():
+        # Step 2. Display sign in link when no token
+        auth_url = auth_manager.get_authorize_url()
+        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+
+
+    sp, all_tracks, user_name = return_all_tracks(auth_manager)
+    playlist = return_playlist(sp=sp, df=all_tracks)
     track_names, _ = get_playlist_tracks(sp, playlist)
-    return render_template('playlist.html', track_names=track_names)
+    return render_template('playlist.html', user=user_name, track_names=track_names, features={})
 
+@app.route('/customized-playlist', methods=['POST'])
+def customized_playlist():
+
+    features = {}
+    features['danceability']     = request.form['danceability']
+    features['energy']           = request.form['energy']
+    features['speechiness']      = request.form['speechiness']
+    features['acousticness']     = request.form['acousticness']
+    features['instrumentalness'] = request.form['instrumentalness']
+    features['liveness']         = request.form['liveness']
+    features['valence']          = request.form['valence']
+    features['tempo']            = request.form['tempo']
+    
+    if not session.get('uuid'):
+        # Step 1. Visitor is unknown, give random ID
+        session['uuid'] = str(uuid.uuid4())
+
+    scope = 'user-read-recently-played user-top-read user-modify-playback-state'
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope=scope,
+                                                cache_path=session_cache_path(),
+                                                show_dialog=True)
+
+    if request.args.get("code"):
+        # Step 3. Being redirected from Spotify auth page
+        auth_manager.get_access_token(request.args.get("code"))
+        return redirect('/')
+
+    if not auth_manager.get_cached_token():
+        # Step 2. Display sign in link when no token
+        auth_url = auth_manager.get_authorize_url()
+        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+
+
+    sp, all_tracks, user_name = return_all_tracks(auth_manager)
+    playlist = return_playlist(sp=sp, df=all_tracks, features=features)
+    print("Printing...")
+    print(playlist)
+    track_names, _ = get_playlist_tracks(sp, playlist)
+    return render_template('playlist.html', user=user_name, track_names=track_names, features=features)
 
 if __name__ == '__main__':
     app.run(debug=True)

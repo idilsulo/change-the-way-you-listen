@@ -13,14 +13,28 @@
     {% for item in track_names %}
     <p>{{item.decode('utf-8')}}</p>
     {% endfor %}
+    
+    <br>
+    <br>
+    
+    <form action="{{ url_for('customized_playlist') }}" method="post">
+    <label for="danceability">danceability:</label>
+    <input type="range" name="danceability" value="{{ features['danceability'] }}">
+    <label for="danceability">energy:</label>
+    <input type="range" name="energy" value="{{ features['energy'] }}">
+    <label for="danceability">speechiness:</label>
+    <input type="range" name="speechiness" value="{{ features['speechiness'] }}">
+    <label for="danceability">acousticness:</label>
+    <input type="range" name="acousticness" value="{{ features['acousticness'] }}">
+    <label for="danceability">instrumentalness:</label>
+    <input type="range" name="instrumentalness" value="{{ features['instrumentalness'] }}">
+    <label for="danceability">liveness:</label>
+    <input type="range" name="liveness" value="{{ features['liveness'] }}">
+    <label for="danceability">valence:</label>
+    <input type="range" name="valence" value="{{ features['valence'] }}">
+    <label for="danceability">tempo:</label>
+    <input type="range" name="tempo" value="{{ features['tempo'] }}">
+    <input type="submit">
+	</form>
 
-     <form>
-	  <input type="radio" id="male" name="gender" value="male">
-	  <label for="male">Male</label><br>
-	  <input type="radio" id="female" name="gender" value="female">
-	  <label for="female">Female</label><br>
-	  <input type="radio" id="other" name="gender" value="other">
-	  <label for="other">Other</label>
-	</form> 
-    </div>
     {% endblock main %}
