@@ -26,6 +26,9 @@
   position: relative;
 }*/
 
+#hidden {
+  display: none;
+}
 #content #loading {
     width: 35px;
     height: 35px;

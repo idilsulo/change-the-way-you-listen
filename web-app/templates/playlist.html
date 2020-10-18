@@ -2,21 +2,21 @@
 
     {% block main %}
     <h1>Hello, {{ user }}!</h1>
-    <h1>Here is your personal listening analysis.</h1>
-    <p>Why wait for the end of the year for Spotify to send you a playlist if you can learn which artists you had listened the most already?</p>
-    <p>Here you can find a visual representation of your most listened artists and genres in various time ranges.</p>
+    <h1>Here is a playlist for you!</h1>
+    <p>The playlist given below is fully-customizable based on the audio features. It considers the artist that you had listened the most in the last month.</p>
     <br>
 
 
     <div class="playlists">
-    <h3>Here is a playlist for you!</h3>
+    <h2>Your Own Customized Playlist</h2>
+    <h2>{{ description }}</h2>
     {% for item in track_names %}
     <p>{{item.decode('utf-8')}}</p>
     {% endfor %}
     
     <br>
     <br>
-    
+
     <form action="{{ url_for('customized_playlist') }}" method="post">
     <label for="danceability">danceability:</label>
     <input type="range" name="danceability" value="{{ features['danceability'] }}">
@@ -34,7 +34,16 @@
     <input type="range" name="valence" value="{{ features['valence'] }}">
     <label for="danceability">tempo:</label>
     <input type="range" name="tempo" value="{{ features['tempo'] }}">
-    <input type="submit">
+    <input type="submit" name="submit" value="Submit" class="btn btn-sm btn-primary">
 	</form>
+
+    <br>
+    <br>
+    <form action="{{ url_for('save_playlist') }}" method="post">
+    <label for="playlist-name">Playlist Name:</label>
+    <input type="text" name="playlist-name">
+    <input type="text" name="tracks" value='{{ track_ids }}' class="hidden">
+    <input type="submit" name="Save Playlist" value="Submit"  class="btn btn-sm btn-primary">
+    </form>
 
     {% endblock main %}
