@@ -29,6 +29,11 @@
 #hidden {
   display: none;
 }
+
+.new-way {
+  color: #1DB954;
+}
+
 #content #loading {
     width: 35px;
     height: 35px;
@@ -48,7 +53,7 @@
 
 svg {
   position: relative;
-  top: -30vh;
+  top: -25vh;
   margin-bottom: 40vh;
   display: block;
   margin-left: auto;

@@ -16,29 +16,47 @@
     
     <br>
     <br>
+    <h2>Playlist Features</h2>
+    <p>You can use the bars below to arrange the features of your playlist.</p>
 
+    <ul>
+        <li>Danceability: Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity.</li>
+        <li>Energy: Represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy. </li>
+        <li>Speechiness: Detects the presence of spoken words in a track. Higher values describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. </li>
+        <li>Acousticness: Measures whether the track is acoustic. </li>
+        <li>Instrumentalness: Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. Rap or spoken word tracks are clearly “vocal”. </li>
+        <li>Liveness: Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live.</li>
+        <li>Valence: Describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry). </li>
+        <li>Tempo: Estimates tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. </li>
+    </ul>
+
+    <br>
+    <br>
+    
     <form action="{{ url_for('customized_playlist') }}" method="post">
     <label for="danceability">danceability:</label>
     <input type="range" name="danceability" value="{{ features['danceability'] }}">
-    <label for="danceability">energy:</label>
+    <label for="energy">energy:</label>
     <input type="range" name="energy" value="{{ features['energy'] }}">
-    <label for="danceability">speechiness:</label>
+    <label for="speechiness">speechiness</label>
     <input type="range" name="speechiness" value="{{ features['speechiness'] }}">
-    <label for="danceability">acousticness:</label>
+    <label for="acousticness">acousticness:</label>
     <input type="range" name="acousticness" value="{{ features['acousticness'] }}">
-    <label for="danceability">instrumentalness:</label>
+    <label for="instrumentalness">instrumentalness:</label>
     <input type="range" name="instrumentalness" value="{{ features['instrumentalness'] }}">
-    <label for="danceability">liveness:</label>
+    <label for="liveness">liveness:</label>
     <input type="range" name="liveness" value="{{ features['liveness'] }}">
-    <label for="danceability">valence:</label>
+    <label for="valence">valence:</label>
     <input type="range" name="valence" value="{{ features['valence'] }}">
-    <label for="danceability">tempo:</label>
+    <label for="tempo">tempo:</label>
     <input type="range" name="tempo" value="{{ features['tempo'] }}">
     <input type="submit" name="submit" value="Submit" class="btn btn-sm btn-primary">
 	</form>
 
     <br>
     <br>
+    <h2>Save Playlist</h2>
+    <p>You can give your playlist a name and save it to your Spotify library.</p>
     <form action="{{ url_for('save_playlist') }}" method="post">
     <label for="playlist-name">Playlist Name:</label>
     <input type="text" name="playlist-name">
