@@ -1,4 +1,9 @@
 <h1>Change The Way You Listen</h1>
+
+![Smile](https://forthebadge.com/images/badges/makes-people-smile.svg)
+
+ [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
+ 
 <p>Change The Way You Listen helps you create playlists based on your top listened artists in the last month using certain tracks properties such as danceability, energy, tempo and so on. It also shows you your own personal listening analysis based on the top artists that you had listened in the past 6 months. 
 
 <h2>Why do you need a personal listening report?</h2>
