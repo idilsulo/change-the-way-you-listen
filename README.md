@@ -10,7 +10,7 @@
 <p>Listening music is fun, but listening "content-aware" music is much more fun. Life is too short to try to search for the genre of each artist you had been listening. Using you personal listening analysis, you can explore which genres are associated with the sounds that you had been listening the most during this time period. This will help you explore more specific categories of the sounds when people ask you your favorite type of music. Because simply saying rock, pop or rap may not be describing your favorites in-depth. Here we show you a variety of ways to describe these sounds.</p>
 <h2>Why not just listen Daily Mix playlists?</h2>
 <p>Daily Mix playlists are great but... </p>
-<p>They do not allow you to use the features of tracks. When you like an artist, you do not necessarily like all the songs that they do. Maybe you do not like the "danceable" songs of that artist because you had found their new release to be not reflecting them pretty well. Using the playlist creation feature that we present here, you can decide which types of songs you want to listen in that genre that the artist you like for the past month falls in.</p>
+<p>They do not allow you to use the features of tracks. When you like an artist, you do not necessarily like all the songs that they do. Maybe you do not like the "danceable" songs of that artist because you had found their new release to be not reflecting them pretty well. Using the playlist creation feature that we present here, you can decide which types of songs you want to listen in that genre corresponding to the artist you like.</p>
 
 <h2>What to do now?</h2>
 <h3>Simply</h3>
