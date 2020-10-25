@@ -67,7 +67,8 @@
         }
     </script>
     </div>
-    
+    <input type="submit" name="submit" value="Submit" class="btn btn-sm btn-primary">
+	</form>
     <br>
     <br>
     <h2>Save Playlist</h2>
@@ -77,6 +78,7 @@
     <input type="text" name="playlist-name">
     <input type="text" name="tracks" value='{{ track_ids }}' class="hidden">
     <input type="submit" name="Save Playlist" value="Save Playlist"  class="btn btn-sm btn-primary">
+
     </form>
 
     {% endblock main %}
