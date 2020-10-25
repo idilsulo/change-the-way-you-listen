@@ -68,21 +68,21 @@
   color: #1DB954;
 }
 
-#content #loading {
+/*#content #loading {
     width: 35px;
     height: 35px;
     display: none;
     background: url(/static/loadingimage.gif) no-repeat;
     cursor: wait;
-    }
+    }*/
 
- svg #loading {
+/* svg #loading {
     width: 35px;
     height: 35px;
     display: none;
     background: url(/static/loadingimage.gif) no-repeat;
     cursor: wait;
-    }
+    }*/
 
 
 svg {
@@ -100,7 +100,7 @@ h2 {
 
 .top{
   position: relative;
-  top: 100vh;
+  top: 120vh;
 }
 
 /*.bar{

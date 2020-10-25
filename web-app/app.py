@@ -53,7 +53,6 @@ def convert_features(features):
 
 
 
-
 @app.route('/')
 @app.route('/index')
 def index():
@@ -88,7 +87,6 @@ def my_analysis():
     if request.args.get("code"):
         # Step 3. Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-
         # TO-DO: Change this to my-analysis and test it like that
         return redirect('/')
 
