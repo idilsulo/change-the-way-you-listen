@@ -177,6 +177,7 @@
                     })
             }
         }
+
     </script>
 
     <div  class="top">
@@ -191,12 +192,26 @@
     </p>
     <br>
     <br>
+    <div>
     <div class="playlist">
-    <a id="login" href="/my-playlist" class="btn btn-sm btn-primary">Get Personal Playlist</a>
+    <a id="login" href="/my-playlist" class="btn btn-sm btn-primary" onclick="return displayFunction()">Get Personal Playlist</a>
     </div>
+    <div id="loader"></div> 
+    <p id="note">Creating your playlist... <br> This can take upto one minute, please be patient.</p>
+    </div>
+    
     <br>
-    <p>Note: Creating your playlist can take upto one minute.</p>
+    
+    
+    <script type='text/javascript'>
+        function displayFunction() {
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("note").style.display = "block";
+            return true;
+        }
+    </script>
     </div>
+
     </div>
     
 

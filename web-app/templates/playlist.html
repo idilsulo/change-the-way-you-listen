@@ -32,7 +32,7 @@
 
     <br>
     <br>
-    
+    <div>
     <form action="{{ url_for('customized_playlist') }}" method="post">
     <label for="danceability">danceability:</label>
     <input type="range" name="danceability" value="{{ features['danceability'] }}">
@@ -50,10 +50,24 @@
     <input type="range" name="valence" value="{{ features['valence'] }}">
     <label for="tempo">tempo:</label>
     <input type="range" name="tempo" value="{{ features['tempo'] }}">
-    <input type="submit" name="submit" value="Submit" class="btn btn-sm btn-primary">
+    <div>
+    <div class="playlist">
+    <input type="submit" name="submit" value="Create Playlist" class="btn btn-sm btn-primary" onclick="return displayFunction()">
+    </div>
+    <div id="loader"></div> 
+    </div>
 	</form>
-    <br>
-    <p>Note: Creating your playlist can take upto one minute.</p>
+    
+    <p id="note">Creating your playlist... <br> This can take upto one minute, please be patient.</p>
+    <script type='text/javascript'>
+        function displayFunction() {
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("note").style.display = "block";
+            return true;
+        }
+    </script>
+    </div>
+    
     <br>
     <br>
     <h2>Save Playlist</h2>
@@ -62,7 +76,7 @@
     <label for="playlist-name">Playlist Name:</label>
     <input type="text" name="playlist-name">
     <input type="text" name="tracks" value='{{ track_ids }}' class="hidden">
-    <input type="submit" name="Save Playlist" value="Submit"  class="btn btn-sm btn-primary">
+    <input type="submit" name="Save Playlist" value="Save Playlist"  class="btn btn-sm btn-primary">
     </form>
 
     {% endblock main %}
