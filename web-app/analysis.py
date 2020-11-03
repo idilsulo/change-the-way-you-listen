@@ -12,9 +12,16 @@ import json
 import os
 import time
 
+import arguments
 
-os.environ['SPOTIPY_REDIRECT_URI'] = 'http://changethewayyoulisten.pythonanywhere.com/my-analysis'
-#os.environ['SPOTIPY_REDIRECT_URI'] = 'http://localhost:5000/my-analysis'
+args = arguments.make_parser()
+
+# TO-DO: Add config file for environment variables
+# os.environ['SPOTIPY_REDIRECT_URI'] = 'http://changethewayyoulisten.pythonanywhere.com/my-analysis'
+# os.environ['SPOTIPY_REDIRECT_URI'] = 'http://localhost:5000/my-analysis'
+os.environ['SPOTIPY_REDIRECT_URI'] = args['SPOTIPY_REDIRECT_URI']
+os.environ['SPOTIPY_CLIENT_SECRET'] = args['SPOTIPY_CLIENT_SECRET']
+os.environ['SPOTIPY_CLIENT_ID'] = args['SPOTIPY_CLIENT_ID']
 
 
 
@@ -99,9 +106,15 @@ def get_top_genres(sp):
 	return top_genres, top_genres_and_artists
 
 
+def genre_selection(top_genres):
+	# Get the only one top genre for now
+	top_genre = list(top_genres.keys())[0] 
+	return top_genre
+
 def get_top_artists(top_genres, top_genres_and_artists):
-	# TO-DO: Let user select from top genres
-	top_genre = list(top_genres.keys())[0] # Get the only one top genre for now
+	
+	# Get the only one top genre for now
+	top_genre = genre_selection(top_genres)
 	print("Selected genre: %s" % (top_genre))
 	artists = []
 	for artist_name, artist_id, genres in top_genres_and_artists:
@@ -169,31 +182,21 @@ def return_all_tracks(auth_manager):
 	return sp, df, user_name
 
 def return_playlist(sp, df, features={}):
-	"""
-	danceability='default', energy='default', speechiness='default', 
-					acousticness='default', instrumentalness='default', liveness='default', 
-					valence='default', tempo='default'
-	"""
-	
-	# df = return_all_tracks(sp)
 
 	# Select tracks based on the provided ranges
-	# top_genres, top_genres_and_artists = get_top_genres(sp)
-	# artists = get_top_artists(top_genres, top_genres_and_artists)
-	# df = get_all_features(sp, artists)
-	# Sort dataframe based on provided features
-	# Randomly return tracks based on sorted 
-	# TO-DO: Select tracks based on user market
-	# TO-DO: Remove duplicate names
-	print("Current dataframe")
-	print(df)
 	for feature, value in features.items():
-		if int(value) < 25:
-			df.sort_values(feature, ascending=False, inplace=True)
-			if len(df) > 75: df = df.head(len(df)//3)
-		elif int(value) > 70:
-			df.sort_values(feature, ascending=True, inplace=True)
-			if len(df) > 75: df = df.head(len(df)//3)
+		# if feature == 'liveness' or feature == 'speechiness':
+		# 	print(feature)
+		# 	continue
+		avg = df[feature].median()
+		if int(value) < avg:
+			# df.sort_values(feature, ascending=False, inplace=True)
+			# if len(df) > 75: df = df.head(len(df)//3)
+			df = df[df[feature] < avg*1.25]
+		elif int(value) > avg:
+			# df.sort_values(feature, ascending=True, inplace=True)
+			# if len(df) > 75: df = df.head(len(df)//3)
+			df = df[df[feature] > avg*0.75]
 		else:
 			continue
 		
@@ -202,16 +205,27 @@ def return_playlist(sp, df, features={}):
 	try:
 		print("Printing data")
 		print(df)
-		return df.sample(25)
+		n = len(df) if len(df) < 25 else 25
+		return df.sample(n)
 	except:
 		return df
 
+
+	return df
+
+
 def get_playlist_tracks(sp, playlist):
+	# track_names = {"{} by {}".format(track['name'], track['artist']) : track['uri'] for track in sp.tracks(track_uris)['tracks']}
+
+
 	track_uris = playlist['uri'].to_list()
 	artist_names = playlist['artist_name'].to_list()
 	track_names = [track['name'] for track in sp.tracks(track_uris)['tracks']]
 	tracks = ["{} by {}".format(track, artist) for track, artist in zip(track_names, artist_names)]
 
+	track_set = {track_name : track_uri for track_name, track_uri in zip(tracks, track_uris)}
+	tracks = list(track_set.keys())
 	tracks = [t.encode('utf8') for t in tracks]
+	track_uris = list(track_set.values())
 	track_uris = map(json.dumps, track_uris)
 	return tracks, track_uris

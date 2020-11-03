@@ -1,14 +1,5 @@
 from flask import Flask
 
-app = Flask(__name__)
-#app.config['SECRET_KEY'] = 'secret_key'
-# from routes import *
-
-# import requests
-# response = requests.get("http://api.open-notify.org/this-api-doesnt-exist")
-
-from flask import Flask
-
 from flask import render_template, request, redirect, session
 from flask_session import Session
 import time
@@ -88,12 +79,13 @@ def my_analysis():
         # Step 3. Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
         # TO-DO: Change this to my-analysis and test it like that
-        return redirect('/')
+        return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
         # Step 2. Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        return redirect(auth_url)
 
     # TO-DO: Add a form to select the analysis of:
     #        * Past 4 weeks
@@ -103,6 +95,9 @@ def my_analysis():
     # Get the top genres of user based on top artists
     sp, user_name, top_genres_data = user_top_genres(auth_manager, term='medium_term')
     top_genres_data = top_genres_data.decode()
+
+    # Get top genres in the short term
+    # top_genres_st = 
     return render_template('analysis.html', user=user_name, top_genres=top_genres_data)
 
 
@@ -124,16 +119,20 @@ def my_playlist():
     if request.args.get("code"):
         # Step 3. Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-        return redirect('/')
+        # TO-DO: Change this to my-analysis and test it like that
+        return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
         # Step 2. Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        return redirect(auth_url)
 
 
     sp, all_tracks, user_name = return_all_tracks(auth_manager)
     playlist = return_playlist(sp=sp, df=all_tracks)
+    print("Printing playlist")
+    print(playlist)
     track_names, track_ids = get_playlist_tracks(sp, playlist)
     string = ""
     for i in track_ids:
@@ -170,12 +169,14 @@ def customized_playlist():
     if request.args.get("code"):
         # Step 3. Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-        return redirect('/')
+        # TO-DO: Change this to my-analysis and test it like that
+        return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
         # Step 2. Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        return redirect(auth_url)
 
 
     sp, all_tracks, user_name = return_all_tracks(auth_manager)
@@ -207,12 +208,14 @@ def save_playlist():
     if request.args.get("code"):
         # Step 3. Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-        return redirect('/')
+        # TO-DO: Change this to my-analysis and test it like that
+        return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
         # Step 2. Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+        return redirect(auth_url)
 
     sp = spotipy.Spotify(auth_manager=auth_manager)
     user_name = sp.current_user()['display_name']
