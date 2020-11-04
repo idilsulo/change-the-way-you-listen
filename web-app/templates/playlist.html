@@ -16,6 +16,17 @@
     
     <br>
     <br>
+
+    <h2>Save Playlist</h2>
+    <p>You can give your playlist a name and save it to your Spotify library.</p>
+    <form action="{{ url_for('save_playlist') }}" method="post">
+    <label for="playlist-name">Playlist Name:</label>
+    <input type="text" name="playlist-name">
+    <input type="text" name="tracks" value='{{ track_ids }}' class="hidden">
+    <input type="submit" name="Save Playlist" value="Save Playlist"  class="btn btn-sm btn-primary">
+    </form>
+    <br>
+    <br>
     <h2>Playlist Features</h2>
     <p>You can use the bars below to arrange the features of your playlist.</p>
 
@@ -67,15 +78,6 @@
         }
     </script>
     </div>
-    <br>
-    <br>
-    <h2>Save Playlist</h2>
-    <p>You can give your playlist a name and save it to your Spotify library.</p>
-    <form action="{{ url_for('save_playlist') }}" method="post">
-    <label for="playlist-name">Playlist Name:</label>
-    <input type="text" name="playlist-name">
-    <input type="text" name="tracks" value='{{ track_ids }}' class="hidden">
-    <input type="submit" name="Save Playlist" value="Save Playlist"  class="btn btn-sm btn-primary">
-    </form>
+    
 
     {% endblock main %}

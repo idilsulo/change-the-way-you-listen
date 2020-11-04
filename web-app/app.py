@@ -39,9 +39,9 @@ def session_cache_path():
 def convert_features(features):
     description = ""
     for feature, value in features.items():
-        if int(value) < 25:
+        if int(value) < 33:
             description += "Low {} - ".format(feature)
-        elif int(value) > 75:
+        elif int(value) > 66:
             description += "High {} - ".format(feature)
 
     if len(description) > 5: 
@@ -125,8 +125,9 @@ def my_playlist():
         auth_url = auth_manager.get_authorize_url()
         return redirect(auth_url)
 
-
-    sp, all_tracks, user_name = return_all_tracks(auth_manager)
+    sp, top_genres, top_genres_and_artists = get_top_genres(auth_manager, term="short_term")
+    top_genre = genre_selection(top_genres)
+    _, all_tracks, user_name = return_all_tracks(sp, top_genre, top_genres_and_artists, term="short_term")
     playlist = return_playlist(sp=sp, df=all_tracks)
     print("Printing...")
     print(playlist[["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
@@ -173,8 +174,9 @@ def customized_playlist():
         auth_url = auth_manager.get_authorize_url()
         return redirect(auth_url)
 
-
-    sp, all_tracks, user_name = return_all_tracks(auth_manager)
+    sp, top_genres, top_genres_and_artists = get_top_genres(auth_manager, term="short_term")
+    top_genre = genre_selection(top_genres)
+    _, all_tracks, user_name = return_all_tracks(sp, top_genre, top_genres_and_artists, term="short_term")
     playlist = return_playlist(sp=sp, df=all_tracks, features=features)
     print("Printing...")
     print(playlist[["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])

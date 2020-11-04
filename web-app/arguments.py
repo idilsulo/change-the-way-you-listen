@@ -1,7 +1,7 @@
 import configparser
 import os 
 
-def make_parser(development=False):
+def make_parser(development=True):
 	
 	config = configparser.ConfigParser()
 	

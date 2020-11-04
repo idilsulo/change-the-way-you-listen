@@ -32,7 +32,9 @@ def cluster_genres(micro_genres, genre_lookup):
 
 	return max(cluster.items(), key=operator.itemgetter(1))[0]
 
-def insert_items(obj, genre, micro_genre, artist):
+# Insert items to display on d3.js chart
+# 	by = micro genre
+def insert_items_by_micro_genre(obj, genre, micro_genre, artist):
 	genre_item = None
 	for child in obj['children']:
 		if child['name'] == genre:
@@ -65,12 +67,48 @@ def insert_items(obj, genre, micro_genre, artist):
 	else:
 		artist_item['size'] += 1
 
+# Insert items to display on d3.js chart
+# 	by = artist
+def insert_items(obj, genre, micro_genre, artist):
+	genre_item = None
+	for child in obj['children']:
+		if child['name'] == genre:
+			genre_item = child
+			break
+
+	if not genre_item:
+		genre_item = {"name": genre, "children": []}
+		obj['children'].append(genre_item)
+
+	artist_item = None
+	for child in genre_item['children']:
+		if child['name'] == artist:
+			artist_item = child
+			break
+
+	if not artist_item:
+		artist_item = {"name": artist, "children": []}
+		genre_item['children'].append(artist_item)
+
+	micro_genre_item = None
+	for child in artist_item['children']:
+		if child['name'] == micro_genre:
+			micro_genre_item = child
+			break
+
+	if not micro_genre_item:
+		micro_genre_item = {"name": micro_genre, "size": 1}
+		artist_item['children'].append(micro_genre_item)
+	else:
+		micro_genre_item['size'] += 1
+
 
 def user_top_genres(auth_manager, term='medium_term'):
 	sp = spotipy.Spotify(auth_manager=auth_manager)
 	user_name = sp.current_user()['display_name']
 	results = sp.current_user_top_artists(time_range=term, limit=50)
 	top_genres_and_artists = [[r['name'], r['genres']] if len(r['genres']) > 0 else [r['name'], ['unknown genre']] for r in results['items']]
+	print(top_genres_and_artists)
 	obj = {'name': 'listening history', 'children':[]}
 	for artist, micro_genres in top_genres_and_artists:
 		genre = cluster_genres(micro_genres, genre_lookup)
@@ -84,13 +122,14 @@ def user_top_genres(auth_manager, term='medium_term'):
 	return sp, user_name, data
 
 
-def get_top_genres(sp):
-	results = sp.current_user_top_artists(time_range='short_term', limit=50)
+def get_top_genres(auth_manager, term="short_term"):
+	sp = spotipy.Spotify(auth_manager=auth_manager)
+	results = sp.current_user_top_artists(time_range=term, limit=50)
 	all_genres = [genre for r in results['items'] for genre in r['genres']]
 	top_genres = Counter(all_genres)
 	top_genres = {key : value for key, value in sorted(top_genres.items(), key=lambda k: k[1], reverse=True)}
 	top_genres_and_artists = [[r['name'], r['id'], r['genres']] if len(r['genres']) > 0 else [r['name'], r['id'], ['unknown genre']] for r in results['items']]
-	return top_genres, top_genres_and_artists
+	return sp, top_genres, top_genres_and_artists
 
 
 def genre_selection(top_genres):
@@ -98,11 +137,11 @@ def genre_selection(top_genres):
 	top_genre = list(top_genres.keys())[0] 
 	return top_genre
 
-def get_top_artists(top_genres, top_genres_and_artists):
+def get_top_artists(top_genre, top_genres_and_artists):
 	
 	# Get the only one top genre for now
-	top_genre = genre_selection(top_genres)
-	print("Selected genre: %s" % (top_genre))
+	# top_genre = genre_selection(top_genres)
+	# print("Selected genre: %s" % (top_genre))
 	artists = []
 	for artist_name, artist_id, genres in top_genres_and_artists:
 		if top_genre in genres:
@@ -160,53 +199,83 @@ def get_all_features(sp, artists):
 	return df
 
 
-def return_all_tracks(auth_manager):
-	sp = spotipy.Spotify(auth_manager=auth_manager)
+def return_all_tracks(sp, top_genre, top_genres_and_artists, term="short_term"):
 	user_name = sp.current_user()['display_name']
-	top_genres, top_genres_and_artists = get_top_genres(sp)
-	artists = get_top_artists(top_genres, top_genres_and_artists)
+	# top_genres, top_genres_and_artists = get_top_genres(sp, term=term)
+	artists = get_top_artists(top_genre, top_genres_and_artists)
 	df = get_all_features(sp, artists)
 	return sp, df, user_name
 
 def return_playlist(sp, df, features={}):
 
 	# Select tracks based on the provided ranges
+	expr_set = False
+	expr = None
+	high = {}
+	low = {} 
+
+	df = df.drop_duplicates(["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"])
 	for feature, value in features.items():
 		# if feature == 'liveness' or feature == 'speechiness':
 		# 	print(feature)
 		# 	continue
 		avg = df[feature].median()
-		# print("feature: ", feature)
-		# print("value: ", int(value))
-		# print("median: ", avg)
+
+		print("feature: ", feature)
+		print("value: ", int(value))
+		print("median: ", avg)
 		# print("min", df[feature].min())
 		# print("max", df[feature].max())
 		# print("mean", df[feature].mean())
-		if int(value) < 25:
+		if int(value) < 33:
 			# df.sort_values(feature, ascending=False, inplace=True)
 			# if len(df) > 75: df = df.head(len(df)//3)
-			df = df[df[feature] < avg*1.1]
+			# df = df[df[feature] < avg*1.1]
+			if not expr_set:
+				expr = df[feature] < avg*1.1
+				expr_set = True
+			else:
+				expr &= df[feature] < avg*1.1
+			low[feature] = int(value)
 			# print("Taking less than ", avg*1.1)
-		elif int(value) > 75:
+		elif int(value) > 66:
 			# df.sort_values(feature, ascending=True, inplace=True)
 			# if len(df) > 75: df = df.head(len(df)//3)
-			df = df[df[feature] > avg*0.9]
+			# df = df[df[feature] > avg*0.9]
+			if not expr_set:
+				expr = df[feature] > avg*0.9
+				expr_set = True
+			else:
+				expr &= df[feature] > avg*0.9
+			high[feature] = int(value)
 			# print("Taking larger than ", avg*0.9)
 		else:
-			df = df[(df[feature] > avg*0.9) & (df[feature] > avg*0.9)]
+			# df = df[(df[feature] > avg*0.9) & (df[feature] < avg*1.1)]
 			# print("Taking values in between ", avg*0.9, avg*1.1)
+			continue
 		
-		print("Dataframe len reduced to: ", len(df))
-	
-	try:
-		print("Printing data")
-		print(df[["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
-		n = len(df) if len(df) < 25 else 25
-		return df.sample(n)
-	except:
-		return df
 
-	return df
+		# print("Dataframe len reduced to: ", len(df))
+	
+	# print("Another data frame")
+	# print(df[expr][["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
+	if expr_set:
+		df = df[expr]
+
+	n = len(df) if len(df) < 25 else 25
+	high_or_low = False
+
+	# Sort features by importance based on user input
+	high = [key  for key, _ in sorted(high.items(), reverse=True, key=lambda k: k[1])]
+	low = [key  for key, _ in sorted(low.items(), reverse=False, key=lambda k: k[1])]
+
+	if len(low) > 0:  df = df.sort_values(low, axis=0, ascending=True)
+	if len(high) > 0: df = df.sort_values(high, axis=0, ascending=False)
+	
+	if len(high) > 0 or len(low) > 0:
+		return df.head(n)
+	else:
+		return df.sample(n)
 
 
 def get_playlist_tracks(sp, playlist):
