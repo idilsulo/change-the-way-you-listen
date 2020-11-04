@@ -1,15 +1,18 @@
-import argparse
-
 import configparser
+import os 
 
-def make_parser(development=True):
+def make_parser(development=False):
 	
 	config = configparser.ConfigParser()
-	config.read('config.ini')
+	
+	path = os.getcwd() 
+	if development: path += '/config.ini'
+	else: path += "/mysite/config.ini"
+
+	config.read(path)
 
 	if development:
 		return config['DEV']
 	else:
 		return config['PROD']
-
 

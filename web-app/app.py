@@ -6,9 +6,16 @@ import time
 import uuid
 import pandas as pd
 
-import threading
+# import threading
 
 from analysis import *
+import arguments
+args = arguments.make_parser()
+
+
+os.environ['SPOTIPY_REDIRECT_URI'] = args['SPOTIPY_REDIRECT_URI']
+os.environ['SPOTIPY_CLIENT_SECRET'] = args['SPOTIPY_CLIENT_SECRET']
+os.environ['SPOTIPY_CLIENT_ID'] = args['SPOTIPY_CLIENT_ID']
 
 app = Flask(__name__)
 
@@ -34,7 +41,7 @@ def convert_features(features):
     for feature, value in features.items():
         if int(value) < 25:
             description += "Low {} - ".format(feature)
-        elif int(value) > 70:
+        elif int(value) > 75:
             description += "High {} - ".format(feature)
 
     if len(description) > 5: 
@@ -64,10 +71,8 @@ def callback():
 # @app.route('/my-analysis', methods=['POST', 'GET'])
 @app.route('/my-analysis')
 def my_analysis():
-    # global sp
-    # global t
     if not session.get('uuid'):
-        # Step 1. Visitor is unknown, give random ID
+        # Visitor is unknown, give random ID
         session['uuid'] = str(uuid.uuid4())
 
     scope = 'user-read-recently-played user-top-read playlist-modify-public playlist-modify-private user-library-read'
@@ -76,15 +81,13 @@ def my_analysis():
                                                 show_dialog=True)
 
     if request.args.get("code"):
-        # Step 3. Being redirected from Spotify auth page
+        # Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-        # TO-DO: Change this to my-analysis and test it like that
         return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
-        # Step 2. Display sign in link when no token
+        # Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
         return redirect(auth_url)
 
     # TO-DO: Add a form to select the analysis of:
@@ -96,7 +99,7 @@ def my_analysis():
     sp, user_name, top_genres_data = user_top_genres(auth_manager, term='medium_term')
     top_genres_data = top_genres_data.decode()
 
-    # Get top genres in the short term
+    # TO_DO: Get top genres in the short term
     # top_genres_st = 
     return render_template('analysis.html', user=user_name, top_genres=top_genres_data)
 
@@ -104,11 +107,8 @@ def my_analysis():
 # @app.route('/my-playlist', methods=['POST', 'GET'])
 @app.route('/my-playlist')
 def my_playlist():
-    # playlist = return_playlist(sp, danceability='low', instrumentalness='high')
-    # track_names, track_uris = get_playlist_tracks(sp, playlist)
-    # return render_template('playlist.html', track_uris=track_uris, track_names=track_names)
     if not session.get('uuid'):
-        # Step 1. Visitor is unknown, give random ID
+        # Visitor is unknown, give random ID
         session['uuid'] = str(uuid.uuid4())
 
     scope = 'user-read-recently-played user-top-read playlist-modify-public playlist-modify-private user-library-read'
@@ -117,22 +117,19 @@ def my_playlist():
                                                 show_dialog=True)
 
     if request.args.get("code"):
-        # Step 3. Being redirected from Spotify auth page
-        auth_manager.get_access_token(request.args.get("code"))
-        # TO-DO: Change this to my-analysis and test it like that
+        # Being redirected from Spotify auth page
         return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
-        # Step 2. Display sign in link when no token
+        # Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
         return redirect(auth_url)
 
 
     sp, all_tracks, user_name = return_all_tracks(auth_manager)
     playlist = return_playlist(sp=sp, df=all_tracks)
-    print("Printing playlist")
-    print(playlist)
+    print("Printing...")
+    print(playlist[["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
     track_names, track_ids = get_playlist_tracks(sp, playlist)
     string = ""
     for i in track_ids:
@@ -144,7 +141,7 @@ def my_playlist():
 @app.route('/customized-playlist', methods=['POST'])
 def customized_playlist():
 
-    # TO-DO: Return playlist features e.g: high danceability, low energy 
+    # Return playlist features e.g: high danceability, low energy 
     #        together with playlist as a string
 
     features = {}
@@ -158,7 +155,7 @@ def customized_playlist():
     features['tempo']            = request.form['tempo']
     
     if not session.get('uuid'):
-        # Step 1. Visitor is unknown, give random ID
+        # Visitor is unknown, give random ID
         session['uuid'] = str(uuid.uuid4())
 
     scope = 'user-read-recently-played user-top-read playlist-modify-public playlist-modify-private user-library-read'
@@ -167,22 +164,20 @@ def customized_playlist():
                                                 show_dialog=True)
 
     if request.args.get("code"):
-        # Step 3. Being redirected from Spotify auth page
+        # Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-        # TO-DO: Change this to my-analysis and test it like that
         return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
-        # Step 2. Display sign in link when no token
+        # Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
         return redirect(auth_url)
 
 
     sp, all_tracks, user_name = return_all_tracks(auth_manager)
     playlist = return_playlist(sp=sp, df=all_tracks, features=features)
     print("Printing...")
-    print(playlist)
+    print(playlist[["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
     track_names, track_ids = get_playlist_tracks(sp, playlist)
 
     string = ""
@@ -197,7 +192,7 @@ def customized_playlist():
 @app.route('/save-playlist', methods=['POST'])
 def save_playlist():
     if not session.get('uuid'):
-        # Step 1. Visitor is unknown, give random ID
+        # Visitor is unknown, give random ID
         session['uuid'] = str(uuid.uuid4())
 
     scope = 'user-read-recently-played user-top-read playlist-modify-public playlist-modify-private user-library-read'
@@ -206,15 +201,13 @@ def save_playlist():
                                                 show_dialog=True)
 
     if request.args.get("code"):
-        # Step 3. Being redirected from Spotify auth page
+        # Being redirected from Spotify auth page
         auth_manager.get_access_token(request.args.get("code"))
-        # TO-DO: Change this to my-analysis and test it like that
         return redirect('/my-analysis')
 
     if not auth_manager.get_cached_token():
-        # Step 2. Display sign in link when no token
+        # Display sign in link when no token
         auth_url = auth_manager.get_authorize_url()
-        #return f'<h2><a href="{auth_url}">Sign in</a></h2>'
         return redirect(auth_url)
 
     sp = spotipy.Spotify(auth_manager=auth_manager)
@@ -223,8 +216,7 @@ def save_playlist():
     name = request.form['playlist-name']
     tracks = request.form['tracks']
     print(tracks)
-    # for t in tracks:
-    #     print(t)
+
     sp.user_playlist_create(user=user_id, name=name, public=True)
     p_id = None
     for playlist in sp.user_playlists(user_id)['items']:
