@@ -126,7 +126,7 @@ def my_playlist():
         return redirect(auth_url)
 
     sp, top_genres, top_genres_and_artists = get_top_genres(auth_manager, term="short_term")
-    top_genre = genre_selection(top_genres)
+    top_genre = genre_selection(top_genres, 0)
     _, all_tracks, user_name = return_all_tracks(sp, top_genre, top_genres_and_artists, term="short_term")
     playlist = return_playlist(sp=sp, df=all_tracks)
     print("Printing...")
@@ -175,7 +175,7 @@ def customized_playlist():
         return redirect(auth_url)
 
     sp, top_genres, top_genres_and_artists = get_top_genres(auth_manager, term="short_term")
-    top_genre = genre_selection(top_genres)
+    top_genre = genre_selection(top_genres, 0)
     _, all_tracks, user_name = return_all_tracks(sp, top_genre, top_genres_and_artists, term="short_term")
     playlist = return_playlist(sp=sp, df=all_tracks, features=features)
     print("Printing...")

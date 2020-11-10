@@ -132,9 +132,10 @@ def get_top_genres(auth_manager, term="short_term"):
 	return sp, top_genres, top_genres_and_artists
 
 
-def genre_selection(top_genres):
+def genre_selection(top_genres, i):
 	# Get the only one top genre for now
-	top_genre = list(top_genres.keys())[0] 
+	top_genre = list(top_genres.keys())[i] 
+	print("Selected genre: ", top_genre)
 	return top_genre
 
 def get_top_artists(top_genre, top_genres_and_artists):
@@ -236,7 +237,7 @@ def return_playlist(sp, df, features={}):
 				expr_set = True
 			else:
 				expr &= df[feature] < avg*1.1
-			low[feature] = int(value)
+			low[feature] = value
 			# print("Taking less than ", avg*1.1)
 		elif int(value) > 66:
 			# df.sort_values(feature, ascending=True, inplace=True)
@@ -247,7 +248,7 @@ def return_playlist(sp, df, features={}):
 				expr_set = True
 			else:
 				expr &= df[feature] > avg*0.9
-			high[feature] = int(value)
+			high[feature] = value
 			# print("Taking larger than ", avg*0.9)
 		else:
 			# df = df[(df[feature] > avg*0.9) & (df[feature] < avg*1.1)]
@@ -263,15 +264,18 @@ def return_playlist(sp, df, features={}):
 		df = df[expr]
 
 	n = len(df) if len(df) < 25 else 25
-	high_or_low = False
 
 	# Sort features by importance based on user input
 	high = [key  for key, _ in sorted(high.items(), reverse=True, key=lambda k: k[1])]
 	low = [key  for key, _ in sorted(low.items(), reverse=False, key=lambda k: k[1])]
 
-	if len(low) > 0:  df = df.sort_values(low, axis=0, ascending=True)
-	if len(high) > 0: df = df.sort_values(high, axis=0, ascending=False)
-	
+	if len(low) < len(high):
+		if len(low) > 0:  df = df.sort_values(low, axis=0, ascending=True)
+		if len(high) > 0: df = df.sort_values(high, axis=0, ascending=False)
+	else:
+		if len(high) > 0: df = df.sort_values(high, axis=0, ascending=False)
+		if len(low) > 0:  df = df.sort_values(low, axis=0, ascending=True)
+
 	if len(high) > 0 or len(low) > 0:
 		return df.head(n)
 	else:
