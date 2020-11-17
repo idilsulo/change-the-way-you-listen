@@ -129,15 +129,15 @@ def my_playlist():
     top_genre = genre_selection(top_genres, 0)
     _, all_tracks, user_name = return_all_tracks(sp, top_genre, top_genres_and_artists, term="short_term")
     playlist = return_playlist(sp=sp, df=all_tracks)
-    print("Printing...")
-    print(playlist[["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
+    # print("Printing...")
+    # print(playlist[["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
     track_names, track_ids = get_playlist_tracks(sp, playlist)
     string = ""
     for i in track_ids:
         string += i
         string += " "
-    return render_template('playlist.html', user=user_name, track_names=track_names, 
-                                            track_ids=string[:-1], features={})
+    return render_template('playlist.html', user=user_name, track_names=track_names, track_ids=string[:-1], 
+                                            top_genre=top_genre, top_genres=list(top_genres.keys())[:3], features={})
 
 @app.route('/customized-playlist', methods=['POST'])
 def customized_playlist():
@@ -175,7 +175,9 @@ def customized_playlist():
         return redirect(auth_url)
 
     sp, top_genres, top_genres_and_artists = get_top_genres(auth_manager, term="short_term")
-    top_genre = genre_selection(top_genres, 0)
+
+    print("Requested: ", request.form['genre'])
+    top_genre = genre_selection(top_genres, 0, requested=request.form['genre'])
     _, all_tracks, user_name = return_all_tracks(sp, top_genre, top_genres_and_artists, term="short_term")
     playlist = return_playlist(sp=sp, df=all_tracks, features=features)
     print("Printing...")
@@ -189,7 +191,8 @@ def customized_playlist():
 
     description = convert_features(features)
     return render_template('playlist.html', user=user_name, track_names=track_names, track_ids=string[:-1],
-                                            features=features, description=description)
+                                            top_genres=list(top_genres.keys())[:3], top_genre=top_genre, features=features, 
+                                            description=description)
 
 @app.route('/save-playlist', methods=['POST'])
 def save_playlist():

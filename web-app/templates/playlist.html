@@ -3,13 +3,15 @@
     {% block main %}
     <h1>Hello, {{ user }}!</h1>
     <h1>Here is a playlist for you!</h1>
-    <p>The playlist given below is fully-customizable based on the audio features. It considers the artist that you had listened the most in the last month.</p>
+    <p>This playlist is constructed based on the artists and genres that you had listened the most in the last month. </p>
+    <p>It is also fully-customizable using the audio features that you can select with the bars given below. The genre selection part shows your top 3 most listened genres of this month. Pick a genre and start playing with the features of your playlist!</p>
     <br>
 
 
     <div class="playlists">
     <h2>Your Own Customized Playlist</h2>
-    <h2>{{ description }}</h2>
+    <h2 class="new-way">Genre: {{ top_genre }} </h2>
+    <h2 class="new-way">{{ description }}</h2>
     {% for item in track_names %}
     <p>{{item.decode('utf-8')}}</p>
     {% endfor %}
@@ -28,7 +30,7 @@
     <br>
     <br>
     <h2>Playlist Features</h2>
-    <p>You can use the bars below to arrange the features of your playlist.</p>
+    <p>You can choose one of your most listened genres and use the bars below to arrange the features of your playlist.</p>
 
     <ul>
         <li>Danceability: Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity.</li>
@@ -44,7 +46,32 @@
     <br>
     <br>
     <div>
+    <script type="text/javascript">
+        window.onload = function() {
+            // document.getElementById("genre1").checked = true;
+            console.log("{{ features }}")
+            var top_genre = "{{ top_genre }}";
+            var genre1 = "{{ top_genres[0] }}";
+            var genre2 = "{{ top_genres[1] }}";
+            var genre3 = "{{ top_genres[2] }}";
+            //console.log(top_genre);
+            checkRadio(top_genre, genre1, genre2, genre3);
+        };
+        function checkRadio(top_genre, genre1, genre2, genre3) {
+                document.getElementById("genre1").checked = top_genre == genre1;
+                document.getElementById("genre2").checked = top_genre == genre2;
+                document.getElementById("genre3").checked = top_genre == genre3;
+        }        
+    </script>
     <form action="{{ url_for('customized_playlist') }}" method="post">
+    <label for="genre">genre:</label><br>
+    <input type="radio" id="genre1" name="genre" value="{{ top_genres[0] }}">
+    <label for="{{ top_genres[0] }}">{{ top_genres[0] }}</label><br>
+    <input type="radio" id="genre2" name="genre" value="{{ top_genres[1] }}">
+    <label for="{{ top_genres[1] }}">{{ top_genres[1] }}</label><br>
+    <input type="radio" id="genre3" name="genre" value="{{ top_genres[2] }}">
+    <label for="{{ top_genres[2] }}">{{ top_genres[2] }}</label><br>
+    <br>
     <label for="danceability">danceability:</label>
     <input type="range" name="danceability" value="{{ features['danceability'] }}">
     <label for="energy">energy:</label>

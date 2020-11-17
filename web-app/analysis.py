@@ -132,8 +132,12 @@ def get_top_genres(auth_manager, term="short_term"):
 	return sp, top_genres, top_genres_and_artists
 
 
-def genre_selection(top_genres, i):
-	# Get the only one top genre for now
+def genre_selection(top_genres, i, requested=None):
+
+	# Return that if there is a requested genre
+	if requested:
+		return requested
+	# Get the only one top genre
 	top_genre = list(top_genres.keys())[i] 
 	print("Selected genre: ", top_genre)
 	return top_genre
@@ -264,6 +268,7 @@ def return_playlist(sp, df, features={}):
 		df = df[expr]
 
 	n = len(df) if len(df) < 25 else 25
+	m = len(df) if len(df) < 50 else 50
 
 	# Sort features by importance based on user input
 	high = [key  for key, _ in sorted(high.items(), reverse=True, key=lambda k: k[1])]
@@ -277,8 +282,11 @@ def return_playlist(sp, df, features={}):
 		if len(low) > 0:  df = df.sort_values(low, axis=0, ascending=True)
 
 	if len(high) > 0 or len(low) > 0:
+		# print(m, n)
+		df = df.sample(m)
 		return df.head(n)
 	else:
+		print("Sampling")
 		return df.sample(n)
 
 
