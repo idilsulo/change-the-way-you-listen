@@ -186,7 +186,12 @@ def get_all_features(sp, artists):
 		
 		while(len(tracks) > 0):
 			if len(df) == 0:
-				df = pd.DataFrame(sp.audio_features(tracks=tracks[:100]))
+				audio_feats = sp.audio_features(tracks=tracks[:100])
+				try:
+					df = pd.DataFrame(audio_feats)
+				except:
+					print(artist_name)
+					break
 				df['artist_name'] = artist_name
 				df['artist_id'] = artist_id
 				# Could not add track names in here
@@ -194,11 +199,16 @@ def get_all_features(sp, artists):
 				# There might be a restriction on different markets
 				# df['track_name'] = track_names[:100]
 			else:
-				df_feats = pd.DataFrame(sp.audio_features(tracks=tracks[:100]))
+				audio_feats = sp.audio_features(tracks=tracks[:100])
+				try:
+					df_feats = pd.DataFrame(audio_feats)
+				except:
+					print(artist_name)
+					break
 				df_feats['artist_name'] = artist_name
 				df_feats['artist_id'] = artist_id
 				# df_feats['track_name'] = track_names[:100]
-				df = df.append(df_feats)
+				df = pd.concat([df, df_feats])
 			tracks = tracks[100:]
 	print(time.time() - t)    
 	return df
@@ -221,17 +231,12 @@ def return_playlist(sp, df, features={}):
 
 	df = df.drop_duplicates(["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"])
 	for feature, value in features.items():
-		# if feature == 'liveness' or feature == 'speechiness':
-		# 	print(feature)
-		# 	continue
 		avg = df[feature].median()
 
 		print("feature: ", feature)
 		print("value: ", int(value))
 		print("median: ", avg)
-		# print("min", df[feature].min())
-		# print("max", df[feature].max())
-		# print("mean", df[feature].mean())
+
 		if int(value) < 33:
 			# df.sort_values(feature, ascending=False, inplace=True)
 			# if len(df) > 75: df = df.head(len(df)//3)
@@ -259,11 +264,6 @@ def return_playlist(sp, df, features={}):
 			# print("Taking values in between ", avg*0.9, avg*1.1)
 			continue
 		
-
-		# print("Dataframe len reduced to: ", len(df))
-	
-	# print("Another data frame")
-	# print(df[expr][["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]])
 	if expr_set:
 		df = df[expr]
 
