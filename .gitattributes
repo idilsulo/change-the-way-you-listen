@@ -1,1 +1,1 @@
-*.ipynb linguist-detactable=false
+notebooks/** linguist-vendored
